@@ -1,23 +1,27 @@
-import React from 'react';
-import { useCalorieStore } from '../../store/useCalorieStore';
+import React from 'react'
+import { useCalorieStore } from '../../store/useCalorieStore'
 
 export const ResultBlock: React.FC = () => {
-  const { result, showResult } = useCalorieStore();
+  const showResult = useCalorieStore((state) => state.showResult)
+  const result = useCalorieStore((state) => state.result)
 
-  if (!showResult || !result) {
-    return null;
+  if (!showResult) {
+    return null
   }
 
   return (
-    <div className="counter-result counter-result_active">
-      <h2 className="h2 counter-result__title">Ваш результат</h2>
-      <p className="text counter-result__text">
-        Суточная норма - <strong>{result.baseCalories} ккал</strong>, 
-        необходимая организму для нормального функционирования.
-      </p>
-      <p className="text counter-result__text">
-        Для поддержания веса нужно употреблять <strong>{result.maintenanceCalories} ккал</strong> в день.
-      </p>
+    <div className="counter-result counter-result_active wrapper">
+      <h2 className="counter-result__title h2">Ваш результат</h2>
+      <div className="counter-result__body">
+        <p className="counter-result__text text">
+          Суточная норма - <strong>{result.dailyNorm} ккал</strong>, 
+          необходимая организму для нормального функционирования.
+        </p>
+        <p className="counter-result__text text">
+          Для поддержания веса нужно употреблять{' '}
+          <strong>{result.maintenance} ккал</strong> в день.
+        </p>
+      </div>
     </div>
-  );
-};
+  )
+}

@@ -1,174 +1,168 @@
-import { create } from 'zustand';
-import { FormData, FormErrors, CalculationResult, ActivityLevel, Gender } from '../types';
-import { calculateBaseCalories, calculateMaintenanceCalories } from '../utils/calculations';
+import { create } from 'zustand'
+import { FormData, Errors, CalculationResult } from '../types'
 
 interface CalorieState {
-  formData: FormData;
-  errors: FormErrors;
-  result: CalculationResult | null;
-  showResult: boolean;
+  formData: FormData
+  errors: Errors
+  result: CalculationResult
+  showResult: boolean
   
-  setGender: (gender: Gender) => void;
-  setAge: (age: string) => void;
-  setHeight: (height: string) => void;
-  setWeight: (weight: string) => void;
-  setActivity: (activity: ActivityLevel) => void;
-  validateField: (name: keyof FormData, value: string) => string | undefined;
-  validateForm: () => boolean;
-  calculate: () => void;
-  clearForm: () => void;
+  setGender: (gender: 'male' | 'female') => void
+  setAge: (value: string) => void
+  setHeight: (value: string) => void
+  setWeight: (value: string) => void
+  setActivity: (activity: 'minimal' | 'low' | 'medium' | 'high' | 'veryHigh') => void
+  validateForm: () => boolean
+  calculate: () => void
+  clearForm: () => void
 }
 
-const initialState: FormData = {
+const initialFormData: FormData = {
   gender: 'male',
   age: '',
   height: '',
   weight: '',
   activity: 'minimal'
-};
+}
+
+const initialErrors: Errors = {
+  age: '',
+  height: '',
+  weight: ''
+}
+
+const initialResult: CalculationResult = {
+  dailyNorm: 0,
+  maintenance: 0
+}
 
 export const useCalorieStore = create<CalorieState>((set, get) => ({
-  formData: initialState,
-  errors: {},
-  result: null,
+  formData: initialFormData,
+  errors: initialErrors,
+  result: initialResult,
   showResult: false,
 
   setGender: (gender) => {
     set((state) => ({
-      formData: { ...state.formData, gender }
-    }));
+      ...state,
+      formData: { ...state.formData, gender },
+      showResult: false
+    }))
   },
 
-  setAge: (age) => {
-    let value = age;
-    let numValue = parseInt(age) || 0;
-    
-    if (numValue < 0) {
-      value = '0';
-    } else if (numValue > 150) {
-      value = '150';
-    }
-    
+  setAge: (value) => {
+    const numValue = value === '' ? '' : String(Math.max(0, parseInt(value) || 0))
     set((state) => ({
-      formData: { ...state.formData, age: value }
-    }));
-    get().validateField('age', value);
+      ...state,
+      formData: { ...state.formData, age: numValue },
+      errors: { 
+        ...state.errors, 
+        age: numValue === '' || parseInt(numValue) <= 0 ? 'Введите корректный возраст' : '' 
+      },
+      showResult: false
+    }))
   },
 
-  setHeight: (height) => {
-    let value = height;
-    let numValue = parseInt(height) || 0;
-    
-    if (numValue < 0) {
-      value = '0';
-    }
-    
+  setHeight: (value) => {
+    const numValue = value === '' ? '' : String(Math.max(0, parseInt(value) || 0))
     set((state) => ({
-      formData: { ...state.formData, height: value }
-    }));
-    get().validateField('height', value);
+      ...state,
+      formData: { ...state.formData, height: numValue },
+      errors: { 
+        ...state.errors, 
+        height: numValue === '' || parseInt(numValue) <= 0 ? 'Введите корректный рост' : '' 
+      },
+      showResult: false
+    }))
   },
 
-  setWeight: (weight) => {
-    let value = weight;
-    let numValue = parseInt(weight) || 0;
-    
-    if (numValue < 0) {
-      value = '0';
-    }
-    
+  setWeight: (value) => {
+    const numValue = value === '' ? '' : String(Math.max(0, parseInt(value) || 0))
     set((state) => ({
-      formData: { ...state.formData, weight: value }
-    }));
-    get().validateField('weight', value);
+      ...state,
+      formData: { ...state.formData, weight: numValue },
+      errors: { 
+        ...state.errors, 
+        weight: numValue === '' || parseInt(numValue) <= 0 ? 'Введите корректный вес' : '' 
+      },
+      showResult: false
+    }))
   },
 
-  setActivity: (activity: ActivityLevel) => {
+  setActivity: (activity) => {
     set((state) => ({
-      formData: { ...state.formData, activity }
-    }));
-  },
-
-  validateField: (name, value) => {
-    const numValue = parseInt(value) || 0;
-    let error: string | undefined;
-
-    switch (name) {
-      case 'age':
-        if (!value) {
-          error = 'Поле не должно быть пустым';
-        } else if (numValue <= 0) {
-          error = 'Возраст должен быть больше 0';
-        } else if (numValue > 150) {
-          error = 'Возраст не может быть больше 150';
-        }
-        break;
-      case 'height':
-        if (!value) {
-          error = 'Поле не должно быть пустым';
-        } else if (numValue < 0) {
-          error = 'Значение не должно быть отрицательным';
-        }
-        break;
-      case 'weight':
-        if (!value) {
-          error = 'Поле не должно быть пустым';
-        } else if (numValue < 0) {
-          error = 'Значение не должно быть отрицательным';
-        }
-        break;
-    }
-
-    set((state) => ({
-      errors: { ...state.errors, [name]: error }
-    }));
-
-    return error;
+      ...state,
+      formData: { ...state.formData, activity },
+      showResult: false
+    }))
   },
 
   validateForm: () => {
-    const { formData, validateField } = get();
-    validateField('age', formData.age);
-    validateField('height', formData.height);
-    validateField('weight', formData.weight);
-
-    const { errors } = get();
-    return !errors.age && !errors.height && !errors.weight;
+    const state = get()
+    const newErrors: Errors = {
+      age: !state.formData.age ? 'Введите возраст' : '',
+      height: !state.formData.height ? 'Введите рост' : '',
+      weight: !state.formData.weight ? 'Введите вес' : ''
+    }
+    
+    set({ errors: newErrors })
+    
+    return !newErrors.age && !newErrors.height && !newErrors.weight
   },
 
   calculate: () => {
-    const { formData } = get();
-    const weight = parseInt(formData.weight) || 0;
-    const height = parseInt(formData.height) || 0;
-    const age = parseInt(formData.age) || 0;
+    const state = get()
+    const { formData } = state
+    
+    if (!formData.age || !formData.height || !formData.weight) {
+      console.error('Не все поля заполнены!')
+      return
+    }
+    
+    try {
+      const age = parseInt(formData.age)
+      const height = parseInt(formData.height)
+      const weight = parseInt(formData.weight)
+      
+      // Формула Миффлина-Сан Жеора
+      let bmr = 10 * weight + 6.25 * height - 5 * age
+      
+      if (formData.gender === 'male') {
+        bmr += 5
+      } else {
+        bmr -= 161
+      }
 
-    const baseCalories = calculateBaseCalories(
-      formData.gender,
-      weight,
-      height,
-      age
-    );
+      // Коэффициенты активности
+      const activityMultipliers = {
+        minimal: 1.2,
+        low: 1.375,
+        medium: 1.55,
+        high: 1.725,
+        veryHigh: 1.9
+      }
 
-    const maintenanceCalories = calculateMaintenanceCalories(
-      baseCalories,
-      formData.activity
-    );
+      const dailyNorm = Math.round(bmr * activityMultipliers[formData.activity])
+      const maintenance = Math.round(dailyNorm * 1.2)
 
-    set({
-      result: {
-        baseCalories: Math.round(baseCalories),
-        maintenanceCalories: Math.round(maintenanceCalories)
-      },
-      showResult: true
-    });
+      const result: CalculationResult = { dailyNorm, maintenance }
+      
+      set({ 
+        result, 
+        showResult: true,
+        errors: { age: '', height: '', weight: '' }
+      })
+    } catch (error) {
+      console.error('Ошибка расчета:', error)
+    }
   },
 
   clearForm: () => {
     set({
-      formData: initialState,
-      errors: {},
-      result: null,
+      formData: { ...initialFormData },
+      errors: { ...initialErrors },
+      result: { ...initialResult },
       showResult: false
-    });
+    })
   }
-}));
+}))
