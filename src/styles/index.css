@@ -140,11 +140,13 @@ select {
   text-transform: none;
 }
 
+/* ИСПРАВЛЕНО: добавлены стандартные свойства appearance */
 [type="button"],
 [type="reset"],
 [type="submit"],
 button {
   -webkit-appearance: button;
+  appearance: button;
 }
 
 [type="button"]::-moz-focus-inner,
@@ -193,8 +195,10 @@ legend {
   height: auto;
 }
 
+/* ИСПРАВЛЕНО: добавлено стандартное свойство */
 [type="search"] {
   -webkit-appearance: textfield;
+  appearance: textfield;
   outline-offset: -2px;
 }
 
@@ -204,6 +208,7 @@ legend {
 
 ::-webkit-file-upload-button {
   -webkit-appearance: button;
+  appearance: button;
   font: inherit;
 }
 

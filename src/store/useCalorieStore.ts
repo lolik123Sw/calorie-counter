@@ -51,40 +51,37 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
   },
 
   setAge: (value) => {
-    const numValue = value === '' ? '' : String(Math.max(0, parseInt(value) || 0))
+    // Разрешаем только цифры и пустую строку
+    const numericValue = value.replace(/[^\d]/g, '')
+    
     set((state) => ({
       ...state,
-      formData: { ...state.formData, age: numValue },
-      errors: { 
-        ...state.errors, 
-        age: numValue === '' || parseInt(numValue) <= 0 ? 'Введите корректный возраст' : '' 
-      },
+      formData: { ...state.formData, age: numericValue },
+      // Не устанавливаем ошибку здесь, только в validateForm
       showResult: false
     }))
   },
 
   setHeight: (value) => {
-    const numValue = value === '' ? '' : String(Math.max(0, parseInt(value) || 0))
+    // Разрешаем только цифры и пустую строку
+    const numericValue = value.replace(/[^\d]/g, '')
+    
     set((state) => ({
       ...state,
-      formData: { ...state.formData, height: numValue },
-      errors: { 
-        ...state.errors, 
-        height: numValue === '' || parseInt(numValue) <= 0 ? 'Введите корректный рост' : '' 
-      },
+      formData: { ...state.formData, height: numericValue },
+      // Не устанавливаем ошибку здесь, только в validateForm
       showResult: false
     }))
   },
 
   setWeight: (value) => {
-    const numValue = value === '' ? '' : String(Math.max(0, parseInt(value) || 0))
+    // Разрешаем только цифры и пустую строку
+    const numericValue = value.replace(/[^\d]/g, '')
+    
     set((state) => ({
       ...state,
-      formData: { ...state.formData, weight: numValue },
-      errors: { 
-        ...state.errors, 
-        weight: numValue === '' || parseInt(numValue) <= 0 ? 'Введите корректный вес' : '' 
-      },
+      formData: { ...state.formData, weight: numericValue },
+      // Не устанавливаем ошибку здесь, только в validateForm
       showResult: false
     }))
   },
@@ -99,10 +96,20 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
 
   validateForm: () => {
     const state = get()
+    const { formData } = state
+    
     const newErrors: Errors = {
-      age: !state.formData.age ? 'Введите возраст' : '',
-      height: !state.formData.height ? 'Введите рост' : '',
-      weight: !state.formData.weight ? 'Введите вес' : ''
+      age: !formData.age ? 'Введите возраст' : 
+           parseInt(formData.age) <= 0 ? 'Возраст должен быть больше 0' :
+           parseInt(formData.age) > 150 ? 'Возраст не может быть больше 150 лет' : '',
+      
+      height: !formData.height ? 'Введите рост' : 
+              parseInt(formData.height) <= 0 ? 'Рост должен быть больше 0' :
+              parseInt(formData.height) > 300 ? 'Рост не может быть больше 300 см' : '',
+      
+      weight: !formData.weight ? 'Введите вес' : 
+              parseInt(formData.weight) <= 0 ? 'Вес должен быть больше 0' :
+              parseInt(formData.weight) > 500 ? 'Вес не может быть больше 500 кг' : ''
     }
     
     set({ errors: newErrors })
@@ -114,8 +121,9 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
     const state = get()
     const { formData } = state
     
-    if (!formData.age || !formData.height || !formData.weight) {
-      console.error('Не все поля заполнены!')
+    // Валидируем перед расчетом
+    if (!state.validateForm()) {
+      console.error('Форма содержит ошибки')
       return
     }
     
@@ -149,8 +157,7 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
       
       set({ 
         result, 
-        showResult: true,
-        errors: { age: '', height: '', weight: '' }
+        showResult: true
       })
     } catch (error) {
       console.error('Ошибка расчета:', error)
