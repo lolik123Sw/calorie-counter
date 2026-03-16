@@ -51,37 +51,31 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
   },
 
   setAge: (value) => {
-    // Разрешаем только цифры и пустую строку
     const numericValue = value.replace(/[^\d]/g, '')
     
     set((state) => ({
       ...state,
       formData: { ...state.formData, age: numericValue },
-      // Не устанавливаем ошибку здесь, только в validateForm
       showResult: false
     }))
   },
 
   setHeight: (value) => {
-    // Разрешаем только цифры и пустую строку
     const numericValue = value.replace(/[^\d]/g, '')
     
     set((state) => ({
       ...state,
       formData: { ...state.formData, height: numericValue },
-      // Не устанавливаем ошибку здесь, только в validateForm
       showResult: false
     }))
   },
 
   setWeight: (value) => {
-    // Разрешаем только цифры и пустую строку
     const numericValue = value.replace(/[^\d]/g, '')
     
     set((state) => ({
       ...state,
       formData: { ...state.formData, weight: numericValue },
-      // Не устанавливаем ошибку здесь, только в validateForm
       showResult: false
     }))
   },
@@ -121,7 +115,6 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
     const state = get()
     const { formData } = state
     
-    // Валидируем перед расчетом
     if (!state.validateForm()) {
       console.error('Форма содержит ошибки')
       return
@@ -131,8 +124,6 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
       const age = parseInt(formData.age)
       const height = parseInt(formData.height)
       const weight = parseInt(formData.weight)
-      
-      // Формула Миффлина-Сан Жеора
       let bmr = 10 * weight + 6.25 * height - 5 * age
       
       if (formData.gender === 'male') {
@@ -141,7 +132,6 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
         bmr -= 161
       }
 
-      // Коэффициенты активности
       const activityMultipliers = {
         minimal: 1.2,
         low: 1.375,

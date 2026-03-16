@@ -1,4 +1,3 @@
-import React from 'react'
 import { CalculatorForm } from './components/CalculatorForm'
 import { useCalorieStore } from './store/useCalorieStore'
 
@@ -19,7 +18,7 @@ function App() {
       <div className="counter">
         <h1 className="counter__title h1">Счетчик калорий</h1>
         <div className="counter__body wrapper">
-          <CalculatorForm />  {/* ← ЭТОТ КОМПОНЕНТ ДОЛЖЕН БЫТЬ ЗДЕСЬ */}
+          <CalculatorForm />  {}
         </div>
       </div>
 
@@ -28,10 +27,10 @@ function App() {
           <h2 className="counter-result__title h2">Ваш результат</h2>
           <div className="counter-result__body">
             <p className="counter-result__text text">
-              Суточная норма - <strong>{result.dailyNorm} ккал</strong>
+              Суточная норма - <strong>{result.dailyNorm} каллорий</strong>
             </p>
             <p className="counter-result__text text">
-              Для поддержания веса: <strong>{result.maintenance} ккал</strong>
+              Для поддержания веса: <strong>{result.maintenance} каллорий</strong>
             </p>
           </div>
         </div>

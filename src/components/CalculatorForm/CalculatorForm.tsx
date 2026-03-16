@@ -1,4 +1,4 @@
-import React, { ChangeEvent, FormEvent, useEffect } from 'react'
+import React, { ChangeEvent, FormEvent} from 'react'
 import { useCalorieStore } from '../../store/useCalorieStore'
 
 export const CalculatorForm: React.FC = () => {
@@ -127,7 +127,7 @@ export const CalculatorForm: React.FC = () => {
           {errors.height && <span className="form__error">{errors.height}</span>}
         </div>
 
-        {/* Вес */}
+        {}
         <div className="form__group">
           <label className="form__label h2" htmlFor="weight">
             Вес
