@@ -10,7 +10,7 @@ function App() {
       <div className="bg">
         <div className="bg__overlay"></div>
         <picture className="bg__img">
-          <source src="/assets/images/bg.webp" type="image/webp" />
+          <source src="assets/images/bg.webp" type="image/webp" />
           <img src="/assets/images/bg.jpeg" alt="Фоновое изображение" />
         </picture>
       </div>
