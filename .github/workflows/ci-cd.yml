@@ -68,20 +68,3 @@ jobs:
         push: true
         tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
 
-  # ===== ЗАДАНИЕ 3: Деплой на сервер =====
-  deploy:
-    needs: build-and-push-image
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    steps:
-    - name: Deploy via SSH
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.DEPLOY_HOST }}
-        username: ${{ secrets.DEPLOY_USER }}
-        key: ${{ secrets.DEPLOY_SSH_KEY }}
-        script: |
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker stop calorie-counter 2>/dev/null || true
-          docker rm calorie-counter 2>/dev/null || true
-          docker run -d --name calorie-counter --restart=unless-stopped -p 80:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
