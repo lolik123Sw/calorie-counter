@@ -15,7 +15,6 @@ COPY . .
 # Собираем проект
 RUN npm run build
 
-# ===== ЭТАП 2: СЕРВИНГ ЧЕРЕЗ NGINX =====
 FROM nginx:alpine
 
 COPY --from=builder /app/dist /usr/share/nginx/html

@@ -1,0 +1,39 @@
+---
+- name: Deploy Calorie Counter Application
+  hosts: all
+  become: yes
+  vars:
+    app_name: calorie-counter
+    registry: ghcr.io
+    image_name: "{{ image_name }}"
+    container_port: 80
+
+  tasks:
+    - name: Login to GitHub Container Registry
+      docker_login:
+        registry_url: "{{ registry }}"
+        username: "lolik123Sw"
+        password: "{{ github_token }}"
+        state: present
+
+    - name: Pull latest image
+      docker_image:
+        name: "{{ registry }}/{{ image_name }}:latest"
+        source: pull
+        force_source: yes
+
+    - name: Stop and remove old container
+      docker_container:
+        name: "{{ app_name }}"
+        state: absent
+        force_kill: yes
+
+    - name: Run new container
+      docker_container:
+        name: "{{ app_name }}"
+        image: "{{ registry }}/{{ image_name }}:latest"
+        state: started
+        restart_policy: unless-stopped
+        ports:
+          - "{{ container_port }}:80"
+        recreate: yes
