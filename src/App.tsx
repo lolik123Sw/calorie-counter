@@ -1,6 +1,7 @@
 import { CalculatorForm } from './components/CalculatorForm'
 import { useCalorieStore } from './store/useCalorieStore'
-
+import bgWebp from './assets/images/bg.webp'
+import bgJpeg from './assets/images/bg.jpeg'
 function App() {
   const showResult = useCalorieStore((state) => state.showResult)
   const result = useCalorieStore((state) => state.result)
@@ -10,8 +11,8 @@ function App() {
       <div className="bg">
         <div className="bg__overlay"></div>
         <picture className="bg__img">
-          <source src="assets/images/bg.webp" type="image/webp" />
-          <img src="/assets/images/bg.jpeg" alt="Фоновое изображение" />
+          <source src={bgWebp} type="image/webp" />
+          <img src={bgJpeg} alt="Фоновое изображение" />
         </picture>
       </div>
 
