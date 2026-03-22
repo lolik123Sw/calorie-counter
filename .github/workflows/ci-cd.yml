@@ -11,7 +11,6 @@ env:
   IMAGE_NAME: lolik123sw/calorie-counter
 
 jobs:
-  # ===== ЗАДАНИЕ 1: Сборка и тесты =====
   build-and-test:
     runs-on: ubuntu-latest
     
@@ -28,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Type check (вместо тестов)
+    - name: Type check 
       run: npx tsc --noEmit
 
     - name: Build frontend
@@ -41,7 +40,7 @@ jobs:
         path: dist/
         retention-days: 1
 
-  # ===== ЗАДАНИЕ 2: Сборка и публикация Docker-образа =====
+
   build-and-push-image:
     needs: build-and-test
     runs-on: ubuntu-latest
