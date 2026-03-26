@@ -94,15 +94,12 @@ export const useCalorieStore = create<CalorieState>((set, get) => ({
     
     const newErrors: Errors = {
       age: !formData.age ? 'Введите возраст' : 
-           parseInt(formData.age) <= 0 ? 'Возраст должен быть больше 0' :
            parseInt(formData.age) > 150 ? 'Возраст не может быть больше 150 лет' : '',
       
       height: !formData.height ? 'Введите рост' : 
-              parseInt(formData.height) <= 0 ? 'Рост должен быть больше 0' :
               parseInt(formData.height) > 300 ? 'Рост не может быть больше 300 см' : '',
       
       weight: !formData.weight ? 'Введите вес' : 
-              parseInt(formData.weight) <= 0 ? 'Вес должен быть больше 0' :
               parseInt(formData.weight) > 500 ? 'Вес не может быть больше 500 кг' : ''
     }
     
