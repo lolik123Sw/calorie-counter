@@ -3,9 +3,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: lolik123sw/calorie-counter
@@ -32,13 +29,6 @@ jobs:
 
     - name: Build frontend
       run: npm run build
-
-    - name: Upload build artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist
-        path: dist/
-        retention-days: 1
 
 
   build-and-push-image:
